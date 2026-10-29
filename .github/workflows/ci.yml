@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: barichello/godot-ci:4.4
+    steps:
+      - uses: actions/checkout@v4
+      - run: godot --headless --path . --import || true
+      - run: godot --headless --path . -s test/run.gd

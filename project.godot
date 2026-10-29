@@ -1,0 +1,11 @@
+; Engine configuration file for the addon's tests and example.
+config_version=5
+
+[application]
+
+config/name="watchtower-godot"
+run/main_scene="res://examples/minimal/main.tscn"
+
+[autoload]
+
+Watchtower="*res://addons/watchtower/watchtower.gd"

@@ -1,0 +1,31 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: barichello/godot-ci:4.4
+    steps:
+      - uses: actions/checkout@v4
+      - run: godot --headless --path . --import || true
+      - run: godot --headless --path . -s test/run.gd
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: zip -r "watchtower-godot-${GITHUB_REF_NAME}.zip" addons LICENSE README.md
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'watchtower-godot-*.zip'
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" watchtower-godot-*.zip --generate-notes --verify-tag
